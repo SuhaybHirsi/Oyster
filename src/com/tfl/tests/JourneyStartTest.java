@@ -24,4 +24,14 @@ public class JourneyStartTest {
 
     }
 
+    @Test
+    public void checksReturnOfReaderID()
+    {
+        assertThat(start_journey.readerId(), is(READER_ID));
+
+    }
+
+
+
+
 }
