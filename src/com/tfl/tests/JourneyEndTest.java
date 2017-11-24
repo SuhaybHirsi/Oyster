@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import java.util.UUID;
 
+import static org.hamcrest.Matchers.closeTo;
 import static org.hamcrest.core.Is.is;
 import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -17,6 +18,11 @@ public class JourneyEndTest {
 
     JourneyEvent end_journey = new JourneyEnd(CARD_ID, READER_ID);
 
+    @Test
+    public void checkReturnOfTime() {
+        long time = System.currentTimeMillis();
+        assertThat((double) time, is(closeTo((double) end_journey.time(), 10)));
+    }
     @Test
     public void checksReturnOfCardID()
     {
