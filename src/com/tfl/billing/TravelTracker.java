@@ -15,17 +15,34 @@ public class TravelTracker implements ScanListener {
 
     private final List<JourneyEvent> eventLog = new ArrayList<JourneyEvent>();
     private final Set<UUID> currentlyTravelling = new HashSet<UUID>();
+    private Database customerDatabase;
+    private GeneralPaymentsSystem payment_instance;
+
+
+//    public TravelTracker() {
+//        this.customerDatabase = CustomerDatabase.getInstance();
+//        this.payment_instance = PaymentsSystem.getInstance();
+//
+//    }
+
+    public TravelTracker(Database customer_database, GeneralPaymentsSystem payment_instance) {
+
+
+        this.customerDatabase = customer_database;
+        this.payment_instance = payment_instance;
+    }
+
 
     public void chargeAccounts() {
-        CustomerDatabase customerDatabase = CustomerDatabase.getInstance();
 
-        List<Customer> customers = customerDatabase.getCustomers();
-        for (Customer customer : customers) {
+
+        List<CustomerInterface> customers = customerDatabase.getCustomers();
+        for (CustomerInterface customer : customers) {
             totalJourneysFor(customer);
         }
     }
 
-    private void totalJourneysFor(Customer customer) {
+    private void totalJourneysFor(CustomerInterface customer) {
         List<JourneyEvent> customerJourneyEvents = new ArrayList<JourneyEvent>();
         for (JourneyEvent journeyEvent : eventLog) {
             if (journeyEvent.cardId().equals(customer.cardId())) {
@@ -55,7 +72,8 @@ public class TravelTracker implements ScanListener {
             customerTotal = customerTotal.add(journeyPrice);
         }
 
-        PaymentsSystem.getInstance().charge(customer, journeys, roundToNearestPenny(customerTotal));
+
+        payment_instance.charge(customer, journeys, roundToNearestPenny(customerTotal));
     }
 
     private BigDecimal roundToNearestPenny(BigDecimal poundsAndPence) {
@@ -73,8 +91,8 @@ public class TravelTracker implements ScanListener {
         return (hour >= 6 && hour <= 9) || (hour >= 17 && hour <= 19);
     }
 
-    public void connect(OysterCardReader... cardReaders) {
-        for (OysterCardReader cardReader : cardReaders) {
+    public void connect(CardReader... cardReaders) {
+        for (CardReader cardReader : cardReaders) {
             cardReader.register(this);
         }
     }
