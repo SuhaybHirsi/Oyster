@@ -2,6 +2,8 @@ package com.tfl.billing;
 
 
 
+import com.tfl.external.Customer;
+
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -10,5 +12,5 @@ public interface GeneralPaymentsSystem {
 //        return PaymentSystemTemp.instance;
 //    }
 
-    void charge(CustomerInterface customer, List<Journey> journeys, BigDecimal totalBill);
+    void charge(Customer customer, List<Journey> journeys, BigDecimal totalBill);
 }

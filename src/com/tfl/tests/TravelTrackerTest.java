@@ -34,7 +34,7 @@ public class TravelTrackerTest {
     public void chargeAccounts() {
 
 
-        new TravelTracker(CustomerDatabase.getInstance()).chargeAccounts();
+        new TravelTracker().chargeAccounts();
     }
 
     @Test

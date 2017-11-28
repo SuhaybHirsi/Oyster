@@ -20,12 +20,12 @@ public class TravelTracker implements ScanListener {
     private final ClockInterface clock;
 
 
-//    public TravelTracker() {
-//        this.customerDatabase = CustomerDatabase.getInstance();
-//        this.payment_instance = PaymentsSystem.getInstance();
-//        this.clock=new SystemClock();
-//
-//    }
+    public TravelTracker() {
+        this.customerDatabase = CustomerDatabaseAdapter.getInstance();
+        this.payment_instance = PaymentsSystemAdapter.getInstance();
+        this.clock=new SystemClock();
+
+    }
 
     public TravelTracker(Database customer_database, GeneralPaymentsSystem payment_instance, ClockInterface clock) {
 
@@ -39,13 +39,13 @@ public class TravelTracker implements ScanListener {
     public void chargeAccounts() {
 
 
-        List<CustomerInterface> customers = customerDatabase.getCustomers();
-        for (CustomerInterface customer : customers) {
+        List<Customer> customers = customerDatabase.getCustomers();
+        for (Customer customer : customers) {
             totalJourneysFor(customer);
         }
     }
 
-    private void totalJourneysFor(CustomerInterface customer) {
+    private void totalJourneysFor(Customer customer) {
         List<JourneyEvent> customerJourneyEvents = new ArrayList<JourneyEvent>();
         for (JourneyEvent journeyEvent : eventLog) {
             if (journeyEvent.cardId().equals(customer.cardId())) {
