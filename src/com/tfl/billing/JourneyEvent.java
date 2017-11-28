@@ -8,10 +8,10 @@ public abstract class JourneyEvent implements JourneyEventInterface {
     private final UUID readerId;
     private final long time;
 
-    public JourneyEvent(UUID cardId, UUID readerId) {
+    public JourneyEvent(UUID cardId, UUID readerId, ClockInterface clock) {
         this.cardId = cardId;
         this.readerId = readerId;
-        this.time = System.currentTimeMillis();
+        this.time = clock.getTime();
     }
 
     @Override

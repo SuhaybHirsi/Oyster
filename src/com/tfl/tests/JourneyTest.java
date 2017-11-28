@@ -1,9 +1,6 @@
 package com.tfl.tests;
 
-import com.tfl.billing.Journey;
-import com.tfl.billing.JourneyEnd;
-import com.tfl.billing.JourneyEvent;
-import com.tfl.billing.JourneyStart;
+import com.tfl.billing.*;
 import org.junit.Test;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -16,13 +13,14 @@ import static org.junit.Assert.assertEquals;
 public class JourneyTest {
 
 
-    final UUID CARD_ID = UUID.randomUUID();
-    final UUID START_READER_ID = UUID.randomUUID();
-    final UUID END_READER_ID = UUID.randomUUID();
+    UUID CARD_ID = UUID.randomUUID();
+    UUID START_READER_ID = UUID.randomUUID();
+    UUID END_READER_ID = UUID.randomUUID();
+    ClockInterface clock= new SystemClock();
 
-    final JourneyEvent JOURNEY_START = new JourneyStart(CARD_ID, START_READER_ID);
+    JourneyEvent JOURNEY_START = new JourneyStart(CARD_ID, START_READER_ID, clock);
 
-    final JourneyEvent JOURNEY_END = new JourneyEnd(CARD_ID, END_READER_ID);
+    JourneyEvent JOURNEY_END = new JourneyEnd(CARD_ID, END_READER_ID, clock);
 
     Journey testJourney = new Journey(JOURNEY_START,JOURNEY_END);
 
@@ -47,18 +45,18 @@ public class JourneyTest {
 
 
 
-//        System.out.println(JOURNEY_START.time());
-//        System.out.println(JOURNEY_END.time());
-//
-//        System.out.println(testJourney.formattedStartTime());
-//        System.out.println(testJourney.formattedEndTime());
-//
-//        System.out.println(testJourney.startTime());
-//        System.out.println(testJourney.endTime());
-//
-//
-//        System.out.println(testJourney.durationSeconds());
-//        System.out.println(testJourney.durationMinutes());
+        System.out.println(JOURNEY_START.time());
+        System.out.println(JOURNEY_END.time());
+
+        System.out.println(testJourney.formattedStartTime());
+        System.out.println(testJourney.formattedEndTime());
+
+        System.out.println(testJourney.startTime());
+        System.out.println(testJourney.endTime());
+
+
+        System.out.println(testJourney.durationSeconds());
+        System.out.println(testJourney.durationMinutes());
 
     }
 

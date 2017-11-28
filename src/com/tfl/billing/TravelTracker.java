@@ -17,19 +17,22 @@ public class TravelTracker implements ScanListener {
     private final Set<UUID> currentlyTravelling = new HashSet<UUID>();
     private Database customerDatabase;
     private GeneralPaymentsSystem payment_instance;
+    private final ClockInterface clock;
 
 
 //    public TravelTracker() {
 //        this.customerDatabase = CustomerDatabase.getInstance();
 //        this.payment_instance = PaymentsSystem.getInstance();
+//        this.clock=new SystemClock();
 //
 //    }
 
-    public TravelTracker(Database customer_database, GeneralPaymentsSystem payment_instance) {
+    public TravelTracker(Database customer_database, GeneralPaymentsSystem payment_instance, ClockInterface clock) {
 
 
         this.customerDatabase = customer_database;
         this.payment_instance = payment_instance;
+        this.clock=clock;
     }
 
 
@@ -100,12 +103,12 @@ public class TravelTracker implements ScanListener {
     @Override
     public void cardScanned(UUID cardId, UUID readerId) {
         if (currentlyTravelling.contains(cardId)) {
-            eventLog.add(new JourneyEnd(cardId, readerId));
+            eventLog.add(new JourneyEnd(cardId, readerId, clock));
             currentlyTravelling.remove(cardId);
         } else {
             if (CustomerDatabase.getInstance().isRegisteredId(cardId)) {
                 currentlyTravelling.add(cardId);
-                eventLog.add(new JourneyStart(cardId, readerId));
+                eventLog.add(new JourneyStart(cardId, readerId, clock));
             } else {
                 throw new UnknownOysterCardException(cardId);
             }
