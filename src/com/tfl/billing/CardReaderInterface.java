@@ -5,7 +5,7 @@ import com.oyster.ScanListener;
 
 import java.util.UUID;
 
-public interface CardReader {
+public interface CardReaderInterface {
     void register(ScanListener scanListener);
 
     void touch(OysterCard card);

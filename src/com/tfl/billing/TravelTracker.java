@@ -3,7 +3,6 @@ package com.tfl.billing;
 import com.oyster.*;
 import com.tfl.external.Customer;
 import com.tfl.external.CustomerDatabase;
-import com.tfl.external.PaymentsSystem;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -94,11 +93,17 @@ public class TravelTracker implements ScanListener {
         return (hour >= 6 && hour <= 9) || (hour >= 17 && hour <= 19);
     }
 
-    public void connect(CardReader... cardReaders) {
-        for (CardReader cardReader : cardReaders) {
+    public void connect(OysterCardReader... cardReaders) {
+        for (OysterCardReader cardReader : cardReaders) {
             cardReader.register(this);
         }
     }
+
+//    public void connect(CardReaderInterface... cardReaders) {
+//        for (CardReaderInterface cardReader : cardReaders) {
+//            cardReader.register(this);
+//        }
+//    }
 
     @Override
     public void cardScanned(UUID cardId, UUID readerId) {
