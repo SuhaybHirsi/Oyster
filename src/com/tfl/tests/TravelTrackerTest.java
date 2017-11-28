@@ -27,12 +27,19 @@ public class TravelTrackerTest {
 
     private class clockTestDouble implements ClockInterface
     {
+        ArrayList<Integer> myTimes = new ArrayList<Integer>() {{
+            add(25200000);
+            add(75200000);
+        }};
         @Override
         public long getTime()
         {
-            //7am on 1st Jan 1970
-            return  25200000;
+            long temp = (long) myTimes.get(0);
+            myTimes.remove(0);
+
+            return  temp;
         }
+
     }
 
     private class customerDatabaseTestDouble implements Database
