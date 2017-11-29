@@ -9,6 +9,7 @@ import org.jmock.integration.junit4.JUnitRuleMockery;
 import org.junit.Rule;
 
 
+import java.lang.reflect.Field;
 import java.util.UUID;
 
 import com.oyster.*;
@@ -76,8 +77,16 @@ public class TravelTrackerTest {
             System.out.println("Journey Summary:");
             Iterator i$ = journeys.iterator();
 
+            while(i$.hasNext()) {
+                Journey journey = (Journey)i$.next();
+                System.out.println(journey.formattedStartTime() + "\t" + this.stationWithReader(journey.originId()) + "\t" + " -- " + journey.formattedEndTime() + "\t" + this.stationWithReader(journey.destinationId()));
+            }
 
             System.out.println("Total charge £: " + totalBill);
+        }
+
+        private String stationWithReader(UUID originId) {
+            return OysterReaderLocator.lookup(originId).name();
         }
     }
 
@@ -118,6 +127,7 @@ public class TravelTrackerTest {
 //        UUID END_READER_ID = UUID.randomUUID();
 
     }
+
 
     @Test
     public void connect() {
