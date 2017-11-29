@@ -3,6 +3,7 @@ package com.tfl.tests;
 import com.tfl.billing.*;
 import com.tfl.underground.OysterReaderLocator;
 import com.tfl.underground.Station;
+import org.jmock.Expectations;
 import org.junit.Test;
 
 import org.jmock.integration.junit4.JUnitRuleMockery;
@@ -90,9 +91,6 @@ public class TravelTrackerTest {
         }
     }
 
-    @Rule
-    public JUnitRuleMockery context = new JUnitRuleMockery();
-
     ClockTestDouble myClock= new ClockTestDouble();
     final Database myCustomerDB = new CustomerDatabaseTestDouble();
     final GeneralPaymentsSystem myPS= new PaymentSystemTestDouble();
@@ -103,6 +101,11 @@ public class TravelTrackerTest {
     OysterCardReader bakerStreetReader = OysterReaderLocator.atStation(Station.BAKER_STREET);
     OysterCardReader kingsCrossReader = OysterReaderLocator.atStation(Station.KINGS_CROSS);
 
+    @Rule
+    public JUnitRuleMockery context = new JUnitRuleMockery();
+
+    GeneralPaymentsSystem mockPaymentSystem = context.mock(GeneralPaymentsSystem.class);
+    Database mockCustomerDB = context.mock(Database.class);
 
     @Test
     public void chargeAccountsForOneTripStartingAtPeakAndEndingAtOffPeak() {
@@ -111,16 +114,35 @@ public class TravelTrackerTest {
         myClock.addTime(25200000l); //peak
         myClock.addTime(75200000l); //off peak
 
-        TravelTracker travelTracker = new TravelTracker(myCustomerDB, myPS, myClock);
+        TravelTracker travelTracker = new TravelTracker(mockCustomerDB, mockPaymentSystem, myClock);
+
+        context.checking(new Expectations() {{
+            Customer zlatan_ibrahimovic = new Customer("Zlatan Ibrahimovic", new OysterCard("38400000-8cf0-11bd-b23e-10b96e4ef00d"));
+            List<Customer> myCustomers= new ArrayList<Customer>();
+            List<Journey> journeys = new ArrayList<Journey>();
+            BigDecimal customerTotal = new BigDecimal(0);
+            myCustomers.add(zlatan_ibrahimovic);
+            exactly(1).of(mockCustomerDB).getCustomers();
+            customerTotal= customerTotal.setScale(2, BigDecimal.ROUND_HALF_UP);
+            will(returnValue(myCustomers));
+//          exactly(1).of(mockCustomerDB).isRegisteredId(myCard.id());will(returnValue(true));
+            exactly(1).of(mockPaymentSystem).charge(zlatan_ibrahimovic, journeys , customerTotal);
+
+        }});
 
         travelTracker.connect(paddingtonReader, bakerStreetReader, kingsCrossReader);
-
-        paddingtonReader.touch(myCard);
-
-        bakerStreetReader.touch(myCard);
+//        travelTracker.cardScanned(myCard.id(), paddingtonReader.id());
+//        paddingtonReader.touch(myCard);
+//
+//        bakerStreetReader.touch(myCard);
 
 
         travelTracker.chargeAccounts();
+
+
+
+
+
 
 //        UUID CARD_ID = UUID.fromString("38400000-8cf0-11bd-b23e-10b96e4ef00d");
 //        UUID START_READER_ID = UUID.randomUUID();
