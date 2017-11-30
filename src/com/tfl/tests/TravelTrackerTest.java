@@ -21,6 +21,8 @@ import java.util.*;
 
 import com.oyster.OysterCard;
 
+import static org.hamcrest.Matchers.*;
+
 public class TravelTrackerTest {
 
     private class ClockTestDouble implements ClockInterface
@@ -118,9 +120,9 @@ public class TravelTrackerTest {
             List<Journey> journeys = new ArrayList<Journey>();
             BigDecimal customerTotal = new BigDecimal(0);
             myCustomers.add(zlatan_ibrahimovic);
-            exactly(1).of(mockCustomerDB).getCustomers();
+            exactly(1).of(mockCustomerDB).getCustomers(); will(returnValue(myCustomers));
             customerTotal= customerTotal.setScale(2, BigDecimal.ROUND_HALF_UP);
-            will(returnValue(myCustomers));
+
 //          exactly(1).of(mockCustomerDB).isRegisteredId(myCard.id());will(returnValue(true));
             exactly(1).of(mockPaymentSystem).charge(zlatan_ibrahimovic, journeys , customerTotal);
 
@@ -148,18 +150,18 @@ public class TravelTrackerTest {
             exactly(1).of(mockCustomerDB).isRegisteredId(myCard.id()); will(returnValue(true));
             Customer zlatan_ibrahimovic = new Customer("Zlatan Ibrahimovic", new OysterCard("38400000-8cf0-11bd-b23e-10b96e4ef00d"));
             List<Customer> myCustomers= new ArrayList<Customer>();
-            List<Journey> journeys = new ArrayList<Journey>();
+//            List<Journey> journeys = new ArrayList<Journey>();
             JourneyEvent journeyStart= new JourneyStart(myCard.id(), paddingtonReader.id(), myClock);
             JourneyEvent journeyEnd= new JourneyEnd(myCard.id(), bakerStreetReader.id(), myClock);
-            Journey myJourney= new Journey(journeyStart, journeyEnd);
-            journeys.add(myJourney);
+//            Journey myJourney= new Journey(journeyStart, journeyEnd);
+//            journeys.add(myJourney);
             BigDecimal customerTotal = new BigDecimal(3.20);
             myCustomers.add(zlatan_ibrahimovic);
-            exactly(1).of(mockCustomerDB).getCustomers();
+            exactly(1).of(mockCustomerDB).getCustomers(); will(returnValue(myCustomers));
             customerTotal= customerTotal.setScale(2, BigDecimal.ROUND_HALF_UP);
-            will(returnValue(myCustomers));
 
-            exactly(1).of(mockPaymentSystem).charge(zlatan_ibrahimovic, journeys , customerTotal);
+
+            exactly(1).of(mockPaymentSystem).charge(with(equal(zlatan_ibrahimovic)), with(aNonNull(ArrayList.class)) , with(equal(customerTotal)));
 
         }});
 
