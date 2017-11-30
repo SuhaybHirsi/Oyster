@@ -108,11 +108,7 @@ public class TravelTrackerTest {
     Database mockCustomerDB = context.mock(Database.class);
 
     @Test
-    public void chargeAccountsForOneTripStartingAtPeakAndEndingAtOffPeak() {
-
-
-        myClock.addTime(25200000l); //peak
-        myClock.addTime(75200000l); //off peak
+    public void chargeAccountsForZeroTrips() {
 
         TravelTracker travelTracker = new TravelTracker(mockCustomerDB, mockPaymentSystem, myClock);
 
@@ -131,10 +127,47 @@ public class TravelTrackerTest {
         }});
 
         travelTracker.connect(paddingtonReader, bakerStreetReader, kingsCrossReader);
+
+        travelTracker.chargeAccounts();
+
+    }
+
+
+    @Test
+    public void chargeAccountsForOneTripStartingAtPeakAndEndingAtOffPeak() {
+
+
+        myClock.addTime(25200000l); //peak
+        myClock.addTime(75200000l); //off peak
+        myClock.addTime(25200000l); //
+        myClock.addTime(75200000l); //peak
+
+        TravelTracker travelTracker = new TravelTracker(mockCustomerDB, mockPaymentSystem, myClock);
+
+        context.checking(new Expectations() {{
+            exactly(1).of(mockCustomerDB).isRegisteredId(myCard.id()); will(returnValue(true));
+            Customer zlatan_ibrahimovic = new Customer("Zlatan Ibrahimovic", new OysterCard("38400000-8cf0-11bd-b23e-10b96e4ef00d"));
+            List<Customer> myCustomers= new ArrayList<Customer>();
+            List<Journey> journeys = new ArrayList<Journey>();
+            JourneyEvent journeyStart= new JourneyStart(myCard.id(), paddingtonReader.id(), myClock);
+            JourneyEvent journeyEnd= new JourneyEnd(myCard.id(), bakerStreetReader.id(), myClock);
+            Journey myJourney= new Journey(journeyStart, journeyEnd);
+            journeys.add(myJourney);
+            BigDecimal customerTotal = new BigDecimal(3.20);
+            myCustomers.add(zlatan_ibrahimovic);
+            exactly(1).of(mockCustomerDB).getCustomers();
+            customerTotal= customerTotal.setScale(2, BigDecimal.ROUND_HALF_UP);
+            will(returnValue(myCustomers));
+
+            exactly(1).of(mockPaymentSystem).charge(zlatan_ibrahimovic, journeys , customerTotal);
+
+        }});
+
+        travelTracker.connect(paddingtonReader, bakerStreetReader, kingsCrossReader);
 //        travelTracker.cardScanned(myCard.id(), paddingtonReader.id());
-//        paddingtonReader.touch(myCard);
-//
-//        bakerStreetReader.touch(myCard);
+        paddingtonReader.touch(myCard);
+
+        bakerStreetReader.touch(myCard);
 
 
         travelTracker.chargeAccounts();
@@ -149,6 +182,7 @@ public class TravelTrackerTest {
 //        UUID END_READER_ID = UUID.randomUUID();
 
     }
+
 
 
     @Test
